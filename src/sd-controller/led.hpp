@@ -1,4 +1,6 @@
-namespace controller{
+#ifndef _LED_
+#define _LED_
+#endif
     class led{
         public:
             led(int pin);
@@ -9,4 +11,3 @@ namespace controller{
             bool led_state;
             int LED_PIN;
     };
-}
