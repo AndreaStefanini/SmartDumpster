@@ -1,0 +1,1 @@
+Una cosa importante da ricordare per l'applicazione da usare su android è dare l'accesso alla posizione all'app, questa fondamentale per eseguire la discovery di nuovi dispositivi Bluetooth

@@ -34,7 +34,7 @@ import static androidx.core.app.ActivityCompat.startActivityForResult;
  * TODO:
  *  request to turn on wifi DONE
  *  request to turn on bt DONE
- *  add bluetooth device to pair list
+ *  check the register, because the discovery doesn't return no new bluetooth devices
  *  use a BT library to manage the exchange of information
  *
  */
@@ -45,6 +45,15 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothAdapter bltAdapt;
     private String BT_TARGET_NAME = "SmartDumpster";
     private Set<BluetoothDevice> newBluetoothDevice= new HashSet<>();
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(BluetoothDevice.ACTION_FOUND.equals(intent.getAction())){
+                BluetoothDevice device=intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                newBluetoothDevice.add(device);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,27 +64,23 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-    private final BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(BluetoothDevice.ACTION_FOUND.equals(intent.getAction())){
-                BluetoothDevice device=intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                newBluetoothDevice.add(device);
-            }
-        }
-    };
+
     public void onStart() {
         super.onStart();
         checkBluetooth();
-        checkWifi();
+        while(!bltAdapt.isEnabled()){}
         if (bltAdapt.startDiscovery()){
-            System.out.println("iniziata la discovery");
+                System.out.println("iniziata la discovery");
         }else{
-            System.out.println("Non iniziata la discovery");
+                System.out.println("Non iniziata la discovery");
         }
+            SetUpBTConnection();
+
+        checkWifi();
+
 
         token = (TextView) findViewById(R.id.token);
-        SetUpBTConnection();
+
     }
     public void onStop() {
         super.onStop();
@@ -148,11 +153,14 @@ public class MainActivity extends AppCompatActivity {
             System.out.print(targetDevice.getName());
         }else{
             //System.out.println("non trovato");
-            if(newBluetoothDevice!=null){
+            if(!newBluetoothDevice.isEmpty()){
                 token.setText("Dispositivo trovato");
-                for(BluetoothDevice device : newBluetoothDevice )
-                        token.setText(device.getName().toString());
 
+                for(BluetoothDevice device : newBluetoothDevice ) {
+                    if (BT_TARGET_NAME == device.getName()) {
+                        token.setText("smartdumpster trovato");
+                    }
+                }
             }else{
                 System.out.println("Dispositivo non trovato");
             }
