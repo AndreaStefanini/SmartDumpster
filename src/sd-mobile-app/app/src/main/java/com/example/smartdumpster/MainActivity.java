@@ -3,13 +3,12 @@ package com.example.smartdumpster;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
+
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -25,10 +24,6 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import static androidx.core.app.ActivityCompat.startActivityForResult;
 
 /**
  * TODO:
@@ -42,50 +37,51 @@ public class MainActivity extends AppCompatActivity {
     private TextView token;
     private String Token;
     private Button btn;
-    private BluetoothAdapter bltAdapt;
-    private String BT_TARGET_NAME = "SmartDumpster";
-    private Set<BluetoothDevice> newBluetoothDevice= new HashSet<>();
-    private final BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(BluetoothDevice.ACTION_FOUND.equals(intent.getAction())){
-                BluetoothDevice device=intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                newBluetoothDevice.add(device);
-            }
-        }
-    };
+    private BluetoothManager bt;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        bltAdapt = BluetoothAdapter.getDefaultAdapter();
-        registerReceiver(receiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+        bt = new BluetoothManagerImpl();
+        registerReceiver(bt.getReceiver(), bt.getFilter());
 
 
     }
 
     public void onStart() {
         super.onStart();
-        checkBluetooth();
-        while(!bltAdapt.isEnabled()){}
-        if (bltAdapt.startDiscovery()){
-                System.out.println("iniziata la discovery");
+        if(bt.TurnOnBluetooth()){
+            if(!bt.getAdapter().isEnabled()){
+                Intent blueOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(blueOn, 1);
+            }
+            while(!bt.getAdapter().isEnabled()){}
+            bt.StopSearch();
+            bt.setUpBluetooth();
         }else{
-                System.out.println("Non iniziata la discovery");
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle("Bluetooth is missing")
+                    .setMessage("This device seems not having the bluetooth, it might be a bug, in that case reboot the system, otherwise you need to get a bluetooth adapter.")
+                    .setPositiveButton("Ok", (dialog1, which) -> {
+                        dialog1.dismiss();
+                        System.exit(0);
+                    })
+                    .create();
         }
-            SetUpBTConnection();
 
         checkWifi();
 
 
-        token = (TextView) findViewById(R.id.token);
+        token = findViewById(R.id.token);
 
     }
+
     public void onStop() {
         super.onStop();
-        bltAdapt.cancelDiscovery();
-        unregisterReceiver(receiver);
+        bt.StopSearch();
+        unregisterReceiver(bt.getReceiver());
     }
     public void GetToken(View view){
 
@@ -94,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 response -> {
                     try {
                         Token  = (String) response.getJSONObject("data").get("employee_name");
-                        token.setText(Token.toString());
+                        token.setText(Token);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -105,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         //StringRequest stringQ = new StringRequest(Request.Method.GET, "http://dummy.restapiexample.com/api/v1/employee/1",  response -> token.setText(response), error -> token.setText("There was an error during comunication with the server"));
         //System.out.println(Token);
 
-        btn = (Button) findViewById(R.id.throw_garbage);
+        btn = findViewById(R.id.throw_garbage);
         btn.setClickable(true);
     }
 
@@ -119,51 +115,5 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(wifi,1);
         }
     }
-    private void checkBluetooth(){
-        if(bltAdapt== null){
-            AlertDialog dialog = new AlertDialog.Builder(this)
-                    .setTitle("Bluetooth is missing")
-                    .setMessage("This device seems not having the bluetooth, it might be a bug, in that case reboot the system, otherwise you need to get a bluetooth adapter.")
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            System.exit(0);
-                        }
-                    })
-                    .create();
-        }else if(!bltAdapt.isEnabled()){
-            Intent blueOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(blueOn, 1);
-        }
 
-    }
-    private void SetUpBTConnection(){
-        BluetoothDevice targetDevice = null;
-        Set<BluetoothDevice> pairedList = bltAdapt.getBondedDevices();
-        if(pairedList.size()>0){
-            for (BluetoothDevice device : pairedList){
-                if(device.getName() == BT_TARGET_NAME){
-                    targetDevice = device;
-
-                }
-            }
-        }
-        if(targetDevice!=null){
-            System.out.print(targetDevice.getName());
-        }else{
-            //System.out.println("non trovato");
-            if(!newBluetoothDevice.isEmpty()){
-                token.setText("Dispositivo trovato");
-
-                for(BluetoothDevice device : newBluetoothDevice ) {
-                    if (BT_TARGET_NAME == device.getName()) {
-                        token.setText("smartdumpster trovato");
-                    }
-                }
-            }else{
-                System.out.println("Dispositivo non trovato");
-            }
-        }
-    }
 }
