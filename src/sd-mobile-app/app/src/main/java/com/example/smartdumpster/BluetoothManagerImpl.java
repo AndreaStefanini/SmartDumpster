@@ -10,36 +10,32 @@ import android.content.IntentFilter;
 
 
 import android.content.Context;
+import android.net.wifi.p2p.WifiP2pManager;
 
 import java.util.HashSet;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 
 
 
-public class BluetoothManagerImpl implements BluetoothManager  {
+public class BluetoothManagerImpl implements BluetoothManager {
     final private BluetoothAdapter bltAdapt;
     private final String BT_TARGET_NAME = "SmartDumpster";
-    private Set<BluetoothDevice> newBluetoothDevice= new HashSet<>();
     public IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-    private final BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(BluetoothDevice.ACTION_FOUND.equals(intent.getAction())){
-                BluetoothDevice device=intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                newBluetoothDevice.add(device);
-            }
-        }
-    };
+    private MyReceiver receiver;
+    BluetoothDevice targetDevice = null;
 
-    public BluetoothManagerImpl(){
+
+
+    public BluetoothManagerImpl() {
         bltAdapt = BluetoothAdapter.getDefaultAdapter();
-
     }
 
 
     @Override
     public boolean TurnOnBluetooth() {
-        if(bltAdapt== null){
+        if (bltAdapt == null) {
             return false;
         }
         return true;
@@ -47,29 +43,20 @@ public class BluetoothManagerImpl implements BluetoothManager  {
 
     @Override
     public void setUpBluetooth() {
-        BluetoothDevice targetDevice = null;
-        Set<BluetoothDevice> pairedList = bltAdapt.getBondedDevices();
-        if(pairedList.size()>0){
-            for (BluetoothDevice device : pairedList){
-                if(device.getName().equals(BT_TARGET_NAME)){
-                    targetDevice = device;
 
+        Set<BluetoothDevice> pairedList = bltAdapt.getBondedDevices();
+        if (pairedList.size() > 0) {
+            for (BluetoothDevice device : pairedList) {
+                if (device.getName().equals(BT_TARGET_NAME)) {
+                    targetDevice = device;
+                    this.StopSearch();
                 }
             }
         }
-        if(targetDevice!=null){
+        if (targetDevice != null) {
             System.out.print(targetDevice.getName());
-        }else{
-            if(!newBluetoothDevice.isEmpty()){
-
-                for(BluetoothDevice device : newBluetoothDevice ) {
-                    if (BT_TARGET_NAME == device.getName()) {
-
-                    }
-                }
-            }else{
-                System.out.println("Dispositivo non trovato");
-            }
+        } else {
+            System.out.println("trovato");
         }
     }
 
@@ -97,4 +84,5 @@ public class BluetoothManagerImpl implements BluetoothManager  {
     public void StartSearch() {
         bltAdapt.startDiscovery();
     }
+
 }

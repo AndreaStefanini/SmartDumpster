@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(blueOn, 1);
             }
             while(!bt.getAdapter().isEnabled()){}
-            bt.StopSearch();
+            bt.StartSearch();
             bt.setUpBluetooth();
         }else{
             AlertDialog dialog = new AlertDialog.Builder(this)
@@ -80,8 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onStop() {
         super.onStop();
-        bt.StopSearch();
-        unregisterReceiver(bt.getReceiver());
+
     }
     public void GetToken(View view){
 
@@ -116,4 +115,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        bt.StopSearch();
+        unregisterReceiver(bt.getReceiver());
+
+    }
 }
