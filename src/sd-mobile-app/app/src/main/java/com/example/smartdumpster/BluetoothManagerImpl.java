@@ -43,7 +43,6 @@ public class BluetoothManagerImpl implements BluetoothManager {
 
     @Override
     public void setUpBluetooth() {
-
         Set<BluetoothDevice> pairedList = bltAdapt.getBondedDevices();
         if (pairedList.size() > 0) {
             for (BluetoothDevice device : pairedList) {

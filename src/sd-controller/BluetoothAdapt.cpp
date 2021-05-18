@@ -10,7 +10,7 @@ Bluetooth::Bluetooth(int TX, int RX){
 void Bluetooth::Setup(){
     
 
-    /*btChannel.begin(38400);
+    btChannel.begin(38400);
     btChannel.print("AT+NAME");
     delay(1000);
     btChannel.print("AT+NAMEisi16");
@@ -18,6 +18,6 @@ void Bluetooth::Setup(){
     btChannel.print("AT+ADDR");
     delay(1000);
     btChannel.print("AT+ROLE=0");
-    delay(1000);*/
+    delay(1000);
     
 }

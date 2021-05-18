@@ -35,7 +35,7 @@ import org.json.JSONException;
  */
 public class MainActivity extends AppCompatActivity {
     private TextView token;
-    private String Token;
+    public String Token;
     private Button btn;
     private BluetoothManager bt;
 

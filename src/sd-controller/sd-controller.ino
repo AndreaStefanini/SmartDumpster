@@ -5,13 +5,13 @@
 #define RED_PIN 9
 #define BT_TX 2
 #define BT_RX 3
-
+SoftwareSerial btChannel(BT_TX,BT_RX)
 Controller* arduino;
 int trash_value=0;
 void setup(){
-  //Serial.begin(9600);
-
-  arduino = new Controller(GREEN_PIN, RED_PIN, POT_PIN,BT_TX,BT_RX );
+  Serial.begin(9600);
+  btChannel.begin(38400);
+  arduino = new Controller(GREEN_PIN, RED_PIN, POT_PIN );
   
 }
 
