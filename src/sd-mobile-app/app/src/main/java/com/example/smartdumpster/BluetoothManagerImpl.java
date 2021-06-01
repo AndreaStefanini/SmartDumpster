@@ -16,15 +16,21 @@ import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.UUID;
 
+import unibo.btlib.BluetoothChannel;
+import unibo.btlib.ConnectToBluetoothServerTask;
+import unibo.btlib.ConnectionTask;
 
 
 public class BluetoothManagerImpl implements BluetoothManager {
     final private BluetoothAdapter bltAdapt;
     private final String BT_TARGET_NAME = "SmartDumpster";
-    public IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+    private IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
     private MyReceiver receiver;
     BluetoothDevice targetDevice = null;
+    final UUID uuid = UUID.randomUUID();
+    private BluetoothChannel btChannel;
 
 
 
@@ -49,6 +55,7 @@ public class BluetoothManagerImpl implements BluetoothManager {
                 if (device.getName().equals(BT_TARGET_NAME)) {
                     targetDevice = device;
                     this.StopSearch();
+                    startConnectionToServer();
                 }
             }
         }
@@ -82,6 +89,27 @@ public class BluetoothManagerImpl implements BluetoothManager {
     @Override
     public void StartSearch() {
         bltAdapt.startDiscovery();
+    }
+
+    @Override
+    public void startConnectionToServer() {
+        new ConnectToBluetoothServerTask(targetDevice,uuid,new ConnectionTask.EventListener(){
+
+            @Override
+            public void onConnectionActive(BluetoothChannel channel) {
+                btChannel = channel;
+            }
+
+            @Override
+            public void onConnectionCanceled() {
+
+            }
+        });
+    }
+
+    @Override
+    public void sendMessage(String message) {
+        btChannel.sendMessage(message);
     }
 
 }

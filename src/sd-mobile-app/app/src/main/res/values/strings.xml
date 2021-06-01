@@ -3,4 +3,5 @@
     <string name="token">token</string>
     <string name="richiedi_token">richiedi token</string>
     <string name="throw_garbage">butta rifiuto</string>
+    <string name="btState">not connected</string>
 </resources>

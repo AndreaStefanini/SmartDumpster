@@ -10,7 +10,7 @@ Controller* arduino;
 int trash_value=0;
 void setup(){
   Serial.begin(9600);
-  btChannel.begin(38400);
+  btChannel.begin(9600);
   arduino = new Controller(GREEN_PIN, RED_PIN, POT_PIN );
   
 }

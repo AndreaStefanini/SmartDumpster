@@ -70,12 +70,8 @@ public class MainActivity extends AppCompatActivity {
                     })
                     .create();
         }
-
         checkWifi();
-
-
         token = findViewById(R.id.token);
-
     }
 
     public void onStop() {
@@ -83,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
     public void GetToken(View view){
-
         RequestQueue requestQ = Volley.newRequestQueue(this);
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET,"https://dummy.restapiexample.com/api/v1/employee/1", null,
                 response -> {
@@ -104,8 +99,15 @@ public class MainActivity extends AppCompatActivity {
         btn.setClickable(true);
     }
 
+    /**
+     *  this function uses the bluetooth channel to communicate
+     * @param view
+     */
     public void ThrowGarbage(View view) {
+        bt.sendMessage(Token);
+        token.setText("");
     }
+
     public void checkWifi(){
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();

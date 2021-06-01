@@ -14,4 +14,6 @@ public interface BluetoothManager {
     BluetoothAdapter getAdapter();
     void StopSearch();
     void StartSearch();
+    void startConnectionToServer();
+    void sendMessage(String message);
 }
