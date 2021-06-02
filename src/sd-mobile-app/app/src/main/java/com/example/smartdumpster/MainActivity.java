@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,6 +25,15 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 
+import java.util.UUID;
+
+import unibo.btlib.BluetoothChannel;
+import unibo.btlib.BluetoothUtils;
+import unibo.btlib.ConnectToBluetoothServerTask;
+import unibo.btlib.ConnectionTask;
+import unibo.btlib.RealBluetoothChannel;
+import unibo.btlib.exceptions.BluetoothDeviceNotFound;
+
 
 /**
  * TODO:
@@ -35,43 +45,30 @@ import org.json.JSONException;
  */
 public class MainActivity extends AppCompatActivity {
     private TextView token;
-    public String Token;
+    private String Token;
+    private BluetoothChannel btChannel;
     private Button btn;
-    private BluetoothManager bt;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        bt = new BluetoothManagerImpl();
-        registerReceiver(bt.getReceiver(), bt.getFilter());
-
+        final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(btAdapter!= null && !btAdapter.isEnabled()){
+            startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE),1);
+        }
+        checkWifi();
 
     }
 
     public void onStart() {
         super.onStart();
-        if(bt.TurnOnBluetooth()){
-            if(!bt.getAdapter().isEnabled()){
-                Intent blueOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(blueOn, 1);
-            }
-            while(!bt.getAdapter().isEnabled()){}
-            bt.StartSearch();
-            bt.setUpBluetooth();
-        }else{
-            AlertDialog dialog = new AlertDialog.Builder(this)
-                    .setTitle("Bluetooth is missing")
-                    .setMessage("This device seems not having the bluetooth, it might be a bug, in that case reboot the system, otherwise you need to get a bluetooth adapter.")
-                    .setPositiveButton("Ok", (dialog1, which) -> {
-                        dialog1.dismiss();
-                        System.exit(0);
-                    })
-                    .create();
+        try {
+            ConnectToBTServer();
+        } catch (BluetoothDeviceNotFound bluetoothDeviceNotFound) {
+            bluetoothDeviceNotFound.printStackTrace();
         }
-        checkWifi();
-        token = findViewById(R.id.token);
     }
 
     public void onStop() {
@@ -104,8 +101,7 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void ThrowGarbage(View view) {
-        bt.sendMessage(Token);
-        token.setText("");
+        btChannel.sendMessage(Token);
     }
 
     public void checkWifi(){
@@ -120,8 +116,35 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        bt.StopSearch();
-        unregisterReceiver(bt.getReceiver());
+    }
+    private void ConnectToBTServer() throws BluetoothDeviceNotFound {
+        final BluetoothDevice serverTarget = BluetoothUtils.getPairedDeviceByName("SmartDumpster");
+        final UUID uuid = BluetoothUtils.getEmbeddedDeviceDefaultUuid();
 
+        new ConnectToBluetoothServerTask(serverTarget, uuid, new ConnectionTask.EventListener() {
+            @Override
+            public void onConnectionActive(BluetoothChannel channel) {
+                TextView state = findViewById(R.id.btState);
+                state.setText("connected");
+                btChannel = channel;
+                btChannel.registerListener(new RealBluetoothChannel.Listener(){
+                    @Override
+                    public void onMessageReceived(String receivedMessage){
+                        token.setText("");
+                    }
+
+                    @Override
+                    public void onMessageSent(String sentMessage) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onConnectionCanceled() {
+                TextView state = findViewById(R.id.btState);
+                state.setText("not connected");
+            }
+        }).execute();
     }
 }
