@@ -8,18 +8,14 @@
 
     <TextView
         android:id="@+id/token"
-        android:layout_width="187dp"
-        android:layout_height="53dp"
-        android:layout_marginStart="106dp"
-        android:layout_marginTop="554dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="13dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="161dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="47dp"
+        android:layout_marginEnd="125dp"
+        android:layout_marginBottom="71dp"
+        app:layout_constraintBottom_toTopOf="@+id/btState"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/request_token" />
 
     <Button
         android:id="@+id/request_token"
@@ -39,16 +35,15 @@
     <TextView
         android:id="@+id/textView"
         style="@style/AppTheme"
-        android:layout_width="wrap_content"
+        android:layout_width="59dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="554dp"
-        android:layout_marginBottom="158dp"
+        android:layout_marginStart="62dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="115dp"
         android:text="@string/token"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintEnd_toStartOf="@+id/token"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/throw_garbage"
@@ -59,6 +54,7 @@
         android:layout_marginEnd="129dp"
         android:layout_marginBottom="270dp"
         android:clickable="false"
+        android:enabled="false"
         android:onClick="ThrowGarbage"
         android:text="@string/throw_garbage"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -70,8 +66,8 @@
         android:id="@+id/btState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="335dp"
-        android:layout_marginEnd="19dp"
+        android:layout_marginStart="131dp"
+        android:layout_marginEnd="131dp"
         android:layout_marginBottom="16dp"
         android:text="@string/btState"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -12,6 +12,7 @@ import android.content.Intent;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -25,6 +26,7 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 
+import java.util.EventListener;
 import java.util.UUID;
 
 import unibo.btlib.BluetoothChannel;
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE),1);
         }
         checkWifi();
+        token = findViewById(R.id.token);
 
     }
 
@@ -75,6 +78,11 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
 
     }
+
+    /**
+     *
+     * @param view
+     */
     public void GetToken(View view){
         RequestQueue requestQ = Volley.newRequestQueue(this);
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET,"https://dummy.restapiexample.com/api/v1/employee/1", null,
@@ -93,15 +101,19 @@ public class MainActivity extends AppCompatActivity {
         //System.out.println(Token);
 
         btn = findViewById(R.id.throw_garbage);
-        btn.setClickable(true);
+        while(btChannel==null && token.getText().equals("")){
+
+        }
+        btn.setEnabled(true);
     }
 
     /**
-     *  this function uses the bluetooth channel to communicate
+     *  this function uses the bluetooth channel to communicate a token to the bluetooth module
      * @param view
      */
     public void ThrowGarbage(View view) {
         btChannel.sendMessage(Token);
+        btn.setEnabled(false);
     }
 
     public void checkWifi(){
@@ -125,17 +137,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onConnectionActive(BluetoothChannel channel) {
                 TextView state = findViewById(R.id.btState);
-                state.setText("connected");
+                state.setText("BT State: connected");
                 btChannel = channel;
                 btChannel.registerListener(new RealBluetoothChannel.Listener(){
                     @Override
                     public void onMessageReceived(String receivedMessage){
-                        token.setText("");
+
                     }
 
                     @Override
                     public void onMessageSent(String sentMessage) {
-
+                        token.setText("");
                     }
                 });
             }
@@ -143,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onConnectionCanceled() {
                 TextView state = findViewById(R.id.btState);
-                state.setText("not connected");
+                state.setText("BT State: not connected");
             }
         }).execute();
     }

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">SmartDumpster</string>
-    <string name="token">token</string>
+    <string name="token">token:</string>
     <string name="richiedi_token">richiedi token</string>
     <string name="throw_garbage">butta rifiuto</string>
-    <string name="btState">not connected</string>
+    <string name="btState">BT State: not connected</string>
 </resources>
