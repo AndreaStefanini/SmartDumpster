@@ -1,5 +1,5 @@
 #include "Arduino.h"
-#include "MsgServiceBT.h"
+#include "MsgServiceBT.hpp"
 
 
 MsgServiceBT::MsgServiceBT(int rxPin, int txPin){
