@@ -8,21 +8,23 @@ void wifi::Setup_WIFI(){
 
 }
 void wifi::HTTP_Req(char* token){
-    client.begin("http://echo.jsontest.com/");
+    wfclient.connect(server,8080);
+    client.begin(wfclient,"http://echo.jsontest.com/");
     client.addHeader("Content-Type", "application/json");
-    StaticJsonBuffer<69> jsonBuffer;
-    char json[] = "{\"token\":\+ token +\"}";
-    JsonObject& root = jsonBuffer.parseObject(json);
-    if(!root.success()) {
-        Serial.println("parseObject() failed");
-    } else {
-        Serial.println("JSON OK");
-    }
-    String data;
-    root.printTo(data);
-    int httpCode = client.POST(data);
+    StaticJsonDocument<69> doc;
+    JsonObject& obj = doc.to<JsonObject>();
+    obj["token"] = token;
+    serializeJson(doc,jsonOutput);
+    int httpCode = client.POST(String(jsonOutput));
     if (httpCode>0 ){
         String payload = http.getString();
-        Serial.println(payload);
+    
     }
+    if(payload=="true"){
+        //devo ritornare positivo al controllore che dovrá informare il telefono e procedere con il potenziometro
+    }else{
+        //devo informare l'utente da telefono che il token non è giusto che quindi deve ritentare
+    }
+    wfclient.stop();
+    client.end();
 }

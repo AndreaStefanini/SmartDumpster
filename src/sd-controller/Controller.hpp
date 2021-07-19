@@ -1,6 +1,7 @@
 #include "led.hpp"
 #include "potenziometro.hpp"
 #include "MsgServiceBT.hpp"
+#include "WiFi_Esp.hpp" 
 
 class Controller{
         public:
@@ -8,7 +9,8 @@ class Controller{
             void AvailableState(); 
             void UnavailableState();
             int getTrashLevel();
-            String retrieve_message();              
+            String retrieve_message();
+            bool conferm_token(String token);              
         private:
             int number_of_trash;
             led* green_led;
@@ -16,5 +18,6 @@ class Controller{
             Potenziometro* trash_pot;
             MsgServiceBT* btService;
             String message;
+            wifi* esp;
             
 };
