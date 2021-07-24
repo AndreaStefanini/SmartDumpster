@@ -1,16 +1,18 @@
-//momentaneamente tengo il codice separato, in caso lo mergo con il sd-controller 
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <ArduinoJson.h>
 #include <string.h>
+#include <SoftwareSerial.h>
+#define rx 4
+#define tx 5
+String content;
+char letter;
 HTTPClient client;
 WiFiClient wfclient;
 char jsonOutput[128];
 IPAddress server(104,21,10,8);
-void setup()
-{
-    Serial.begin(115200);
-    //first i proceed by setting up the wifi by setting the wifi with begin, it automaticaly set it on station 
+SoftwareSerial arSerial(rx,tx);
+void ConnectWifi(){
     WiFi.begin("Vodafone-Casa","Stefanini,217");
     Serial.println("Connecting...");
     while (WiFi.status()!= WL_CONNECTED) {
@@ -20,11 +22,36 @@ void setup()
     Serial.print("Connected, acquired an IP Address:");
     Serial.println(WiFi.localIP());
 }
+void setup()
+{
+    Serial.begin(9600);
+    arSerial.begin(9600);
+    ConnectWifi();
+}
 
 void loop()
-{
-    wfclient.connect(server,8080);
-    const char* token = "prova";
+{ 
+    
+    while(arSerial.available()>0){
+        char letter = arSerial.read();
+        if(letter != '\r'){
+          content+=letter;
+        }     
+     }
+     // a delay was inserted because the serial empty itself faster than the read function to complete, so it create situations where the read was able to read only the first character
+     delay(1000);
+     if(content!=""){
+          Serial.println("il contenuto della seriale:");
+          Serial.println(content);
+          connection(content);
+          content=""; 
+     }
+        
+}
+
+void connection(String token){
+ 
+    wfclient.connect(server,80);
     const char* url ="http://jsonplaceholder.typicode.com/posts";
     client.begin(wfclient,url);
     client.addHeader("Content-Type", "application/json");
@@ -32,7 +59,7 @@ void loop()
     JsonObject object = doc.to<JsonObject>();
     object["token"]= token;
     serializeJson(doc, jsonOutput);
-    Serial.println(jsonOutput);
+    //Serial.println(jsonOutput);
  
     
      
@@ -43,4 +70,6 @@ void loop()
         Serial.println(payload);
     }
     client.end();
+    wfclient.stop();
+    
 }
