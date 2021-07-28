@@ -5,11 +5,11 @@ Controller::Controller(int GREEN_PIN, int RED_PIN, int POT_PIN, int BT_RX, int B
         red_led = new led(RED_PIN);
         trash_pot = new Potenziometro(POT_PIN);
         btService = new MsgServiceBT(BT_RX,BT_TX);
+        //esp = new MsgServiceBT(ESP_RX,ESP_TX);
         espSerial = new SoftwareSerial(ESP_RX, ESP_TX);
         espSerial->begin(9600);
-        //esp = new wifi();
-        //esp->Setup_WIFI();
         btService->init();
+        //esp->init();
         
 }
 void Controller::AvailableState(){
@@ -26,14 +26,14 @@ int Controller::getTrashLevel(){
 }
 String Controller::retrieve_message(){
         String message = btService->receiveMsg()->getContent();
-        return message;
-        
-        
+        return message;   
 }
 bool Controller::confirm_token(String token){
        Serial.println("mando all'esp il token");
        Serial.println(token);
        espSerial->print(token);
+       //Msg* msg = new Msg(token);
+       //esp->sendMsg(*msg);
 }
 void Controller::send_response(String response){
     Serial.println("la parola è:");
@@ -44,4 +44,21 @@ void Controller::send_response(String response){
     }
     Msg* msg = new Msg("it's not ping");
     btService->sendMsg(*msg);
+}
+String Controller::retrieve_request(){
+  String request = "";
+  while(espSerial->available()){
+    char letter = espSerial->read();
+    if (letter != '\r' || letter != '\n' ){
+      request+=letter;
+    }
+  }
+  return request;
+}
+void Controller::sendTrash_level(int trash){
+  String msg ="I";
+  msg+=String(trash);
+  //Msg* message = new Msg(msg);
+  //esp->sendMsg(*message);
+  espSerial->print(msg);
 }

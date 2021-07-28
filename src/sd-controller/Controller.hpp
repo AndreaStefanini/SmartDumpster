@@ -13,7 +13,9 @@ class Controller{
             int getTrashLevel();
             String retrieve_message();
             bool confirm_token(String token); 
-            void send_response(String response);             
+            void send_response(String response);
+            String retrieve_request(); 
+            void sendTrash_level(int trash);            
         private:
             int number_of_trash;
             led* green_led;
@@ -21,5 +23,6 @@ class Controller{
             Potenziometro* trash_pot;
             MsgServiceBT* btService;
             SoftwareSerial* espSerial;
+            //MsgServiceBT* esp;
             
 };
