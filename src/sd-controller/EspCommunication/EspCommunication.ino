@@ -9,10 +9,8 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WebServer.h>
-#include <ESP8266mDNS.h>
 #include <ArduinoJson.h>
 #include <SoftwareSerial.h>
-#include <string.h>
 #define rx 4
 #define tx 5
 int Trash =0;
@@ -28,7 +26,7 @@ void setup()
 {
     Serial.begin(9600);
     arSerial.begin(9600);
-    WiFi.begin("your-wifi","your-password");
+    WiFi.begin("your-wifi","your-passwprd");
     Serial.println("Connecting...");
     while (WiFi.status()!= WL_CONNECTED) {
         delay(500);
@@ -85,7 +83,7 @@ void handleEmptyTrash(){
   server.send(200,"text/html",SendHTML(0));
 }
 String SendHTML(int trash){
-  String page="<!DOCTYPE html><html>\n";
+  String page="<!DOCTYPE html>\n<html>\n";
   page+= "<head><meta name=\"viewport\" content=\"device-width, initial-scale=1.0, user-scalable=no\">\n";
   page+= "<title> SmartDumpster</title>\n";
   page+="<style>\n";
@@ -94,18 +92,18 @@ String SendHTML(int trash){
   page+=".button_avail {background-color: green; border-radius:5px; padding: 17px 22px; color:white; text-decoration: none;}\n";
   page+=".trash {display: inline-block;}\n";
   page+="</style>\n";
-  //page+="<script>\n";
-  //page+="window.setInterval(fetch(\"/refresh\").then(function(response) {return response.json();}).then(function(data) {document.getElementById(\".trash\").innerHTML=data[\"trash\"];}),2000);";
-  //page+="</script>\n";
+  page+="<script>\n";
+  page+="setInterval(fetch(\"/refresh\").then(function(response) {return response.json();}).then(function(data) {document.getElementById(\"trash\").innerHTML=\"Trash level:\"+ data[\"trash\"];}),10000);\n";
+  page+="</script>\n";
   page+="</head>\n";
   page+="<body>\n";
   page+="<h1 class=\"title\"> SmartDumpster </h1>\n";
   page+="<h3 class=\"title\"> Admin Interface </h3>\n";
 
   if(trash == 0){
-    page+="<a class=\"button_nonavail\" href=\"/empty\">Empty</a> <p class=\"trash\">Trash level:0</p>\n";
+    page+="<a class=\"button_nonavail\" href=\"/empty\">Empty</a> <p class=\"trash\" id=\"trash\">Trash level:0</p>\n";
   }else{
-    page+="<a class=\"button_avail\" href =\"/empty\">Empty</a> <p class=\"trash\">Trash level:</p>";
+    page+="<a class=\"button_avail\" href =\"/empty\">Empty</a> <p class=\"trash\" id=\"trash\">Trash level:</p>";
     page+=String(trash);
   }
   page+="</body>\n";
@@ -151,5 +149,9 @@ void handleRefresh(){
   String msg = "{\"trash\":";
   msg+=String(Trash);
   msg+="}";
-  server.send(200,"text/plain",msg);
+  StaticJsonDocument<256> doc;
+  JsonObject object = doc.to<JsonObject>();
+  object["trash"]= Trash;
+  serializeJson(doc, jsonOutput);
+  server.send(200,"text/plain",String(jsonOutput));
 }
