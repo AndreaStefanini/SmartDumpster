@@ -28,7 +28,7 @@ void setup()
 {
     Serial.begin(9600);
     arSerial.begin(9600);
-    WiFi.begin("Vodafone-Casa","Stefanini,217");
+    WiFi.begin("your-wifi","your-password");
     Serial.println("Connecting...");
     while (WiFi.status()!= WL_CONNECTED) {
         delay(500);
@@ -39,6 +39,7 @@ void setup()
     server.on("/", handleOnConnect);
     server.onNotFound(handleNotFound);
     server.on("/empty", handleEmptyTrash);
+    server.on("/refresh", handleRefresh);
     server.begin();
     
 }
@@ -46,7 +47,6 @@ void setup()
 void loop(){ 
     server.handleClient();     
     readSerial();
-   
 }
 
 void connection(String token){
@@ -94,6 +94,9 @@ String SendHTML(int trash){
   page+=".button_avail {background-color: green; border-radius:5px; padding: 17px 22px; color:white; text-decoration: none;}\n";
   page+=".trash {display: inline-block;}\n";
   page+="</style>\n";
+  //page+="<script>\n";
+  //page+="window.setInterval(fetch(\"/refresh\").then(function(response) {return response.json();}).then(function(data) {document.getElementById(\".trash\").innerHTML=data[\"trash\"];}),2000);";
+  //page+="</script>\n";
   page+="</head>\n";
   page+="<body>\n";
   page+="<h1 class=\"title\"> SmartDumpster </h1>\n";
@@ -115,7 +118,7 @@ void sendSerialMessage(String msg){
 void readSerial(){
   while(arSerial.available()>0){
         char letter = arSerial.read();
-        if(letter != '\r'){
+        if(letter != '\r' && letter!='\n'){
           content+=letter;
         }     
      }
@@ -143,4 +146,10 @@ void readSerial(){
 }
 void handleNotFound(){
    server.send(404, "text/plain", "NOT FOUND");
+}
+void handleRefresh(){
+  String msg = "{\"trash\":";
+  msg+=String(Trash);
+  msg+="}";
+  server.send(200,"text/plain",msg);
 }

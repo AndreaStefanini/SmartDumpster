@@ -22,7 +22,7 @@ void Controller::UnavailableState(){
 }
 int Controller::getTrashLevel(){
         trash_pot->readPotenziometro();
-        return trash_pot->getValue();
+        return (trash_pot->getValue())/32;
 }
 String Controller::retrieve_message(){
         String message = btService->receiveMsg()->getContent();
@@ -31,7 +31,9 @@ String Controller::retrieve_message(){
 bool Controller::confirm_token(String token){
        Serial.println("mando all'esp il token");
        Serial.println(token);
-       espSerial->print(token);
+       String msg = "T";
+       msg+=token;
+       espSerial->println(msg);
        //Msg* msg = new Msg(token);
        //esp->sendMsg(*msg);
 }
@@ -49,7 +51,7 @@ String Controller::retrieve_request(){
   String request = "";
   while(espSerial->available()){
     char letter = espSerial->read();
-    if (letter != '\r' || letter != '\n' ){
+    if (letter != '\r' && letter != '\n' ){
       request+=letter;
     }
   }
@@ -60,5 +62,5 @@ void Controller::sendTrash_level(int trash){
   msg+=String(trash);
   //Msg* message = new Msg(msg);
   //esp->sendMsg(*message);
-  espSerial->print(msg);
+  espSerial->println(msg);
 }
