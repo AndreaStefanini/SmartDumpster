@@ -22,7 +22,7 @@ bool MsgServiceBT::isMsgAvailable(){
 Msg* MsgServiceBT::receiveMsg(){
   while (channel->available()) {
     char ch = (char) channel->read();
-    if (ch == '\n'){
+    if (ch == '\n' || ch == '\r'){
       Msg* msg = new Msg(content);  
       content = "";
       return msg;    

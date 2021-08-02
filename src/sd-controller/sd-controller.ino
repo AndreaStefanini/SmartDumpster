@@ -1,44 +1,49 @@
 #include "Controller.hpp"
-#define POT_PIN A5
-#define GREEN_PIN 9
-#define RED_PIN 13
+#include <SimpleTimer.h>
+#define TRASH_C 9
+#define TRASH_B 12
+#define TRASH_A 13
+#define SERVO 8
 #define BT_TX 2
 #define BT_RX 3
 #define ESP_RX 5
 #define ESP_TX 6
 Controller* arduino;
-int trash_value=0;
+SimpleTimer timer;
 void setup(){
   Serial.begin(9600);
-  arduino = new Controller(GREEN_PIN, RED_PIN, POT_PIN,BT_RX,BT_TX, ESP_RX, ESP_TX ); 
+  arduino = new Controller(TRASH_A,TRASH_B,TRASH_C,BT_RX,BT_TX, ESP_RX, ESP_TX, SERVO ); 
 }
 
 void loop(){
-  int new_trash = arduino->getTrashLevel();
-  delay(50);
-  if(trash_value!=new_trash){
-    trash_value=new_trash;
-    arduino->sendTrash_level(trash_value);   
-    Serial.println(trash_value);
+  if(timer.isReady()){
+    arduino->close_lid();
+    timer.reset();
+    Serial.println("Il tempo per inserire il rifiuto all'interno del bidone è scaduto ti preghiamo di riprovare");
   }
-  if(trash_value<31){
-    arduino->AvailableState();
     String content = arduino->retrieve_message();
+    delay(1000);
+    
     if (content != ""){
       Serial.println(content);
-      
-      arduino->send_response(content);
-      arduino->confirm_token(content);
-    }
-  }else{
-    arduino->UnavailableState();
-  }
-  
-  String request = arduino->retrieve_request();
-  if(request=="I"){
-    Serial.print("richiesta quantità di rifiuti");
-    //arduino->sendTrash_level(trash_value);
-  }
-  
-  
+      if(content.equals("A")){
+        arduino->SelectTrashA();
+        timer.setInterval(10000);
+        arduino->open_lid();
+      }else if(content.equals("B")){
+        arduino->SelectTrashB();
+        timer.setInterval(10000);
+        arduino->open_lid();
+      }else if(content.equals("C")){
+        arduino->SelectTrashC();
+        timer.setInterval(10000);
+        arduino->open_lid();
+      }else if(content.equals("1")){
+          arduino->close_lid();
+          timer.reset();
+          Serial.println("Un rifiuto aggiunto al bidone :)");
+      }else{
+        Serial.println("An error occured while receiving a message... please try again");   
+      }
+    }  
 }

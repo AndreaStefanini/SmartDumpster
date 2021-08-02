@@ -1,28 +1,28 @@
 #include "led.hpp"
-#include "potenziometro.hpp"
+#include "servo_motore.hpp"
 #include "MsgServiceBT.hpp"
 #include <SoftwareSerial.h>
-
+#define OPEN 180
+#define CLOSE -180
  
 
 class Controller{
         public:
-            Controller(int GREEN_PIN, int RED_PIN, int POT_PIN, int BT_RX, int BT_TX, int ESP_RX, int ESP_TX);
-            void AvailableState(); 
-            void UnavailableState();
+            Controller(int TRASH_A,int TRASH_B,int TRASH_C,int BT_RX, int BT_TX,int ESP_RX,int ESP_TX, int SERVO);
             int getTrashLevel();
-            String retrieve_message();
-            bool confirm_token(String token); 
+            String retrieve_message(); 
             void send_response(String response);
-            String retrieve_request(); 
-            void sendTrash_level(int trash);            
+            void SelectTrashA();
+            void SelectTrashB();
+            void SelectTrashC();
+            void open_lid();
+            void close_lid();
         private:
-            int number_of_trash;
-            led* green_led;
-            led* red_led;
-            Potenziometro* trash_pot;
+            servo_motore* servo;
+            led* Trash_A;
+            led* Trash_B;
+            led* Trash_C;
             MsgServiceBT* btService;
             SoftwareSerial* espSerial;
-            //MsgServiceBT* esp;
             
 };

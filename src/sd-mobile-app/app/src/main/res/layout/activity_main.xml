@@ -17,21 +17,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/request_token" />
 
-    <Button
-        android:id="@+id/request_token"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="130dp"
-        android:layout_marginTop="475dp"
-        android:layout_marginEnd="130dp"
-        android:layout_marginBottom="208dp"
-        android:onClick="GetToken"
-        android:text="@string/richiedi_token"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/textView"
         style="@style/AppTheme"
@@ -49,18 +34,29 @@
         android:id="@+id/throw_garbage"
         android:layout_width="153dp"
         android:layout_height="53dp"
-        android:layout_marginStart="129dp"
-        android:layout_marginTop="417dp"
-        android:layout_marginEnd="129dp"
-        android:layout_marginBottom="270dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="33dp"
         android:clickable="false"
         android:enabled="false"
         android:onClick="ThrowGarbage"
         android:text="@string/throw_garbage"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/trashes" />
+
+    <Button
+        android:id="@+id/request_token"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="26dp"
+        android:onClick="GetToken"
+        android:text="@string/richiedi_token"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/throw_garbage"
+        app:layout_constraintTop_toBottomOf="@+id/trashes" />
 
     <TextView
         android:id="@+id/btState"
@@ -73,5 +69,39 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <RadioGroup
+        android:id="@+id/trashes"
+        android:layout_width="123dp"
+        android:layout_height="145dp"
+        android:layout_marginStart="144dp"
+        android:layout_marginTop="352dp"
+        android:layout_marginEnd="144dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RadioButton
+            android:id="@+id/radioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="TrashASelected"
+            android:text="@string/TrashA" />
+
+        <RadioButton
+            android:id="@+id/radioButton2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="TrashBSelected"
+            android:text="@string/TrashB" />
+
+        <RadioButton
+            android:id="@+id/radioButton3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:onClick="TrashCSelected"
+            android:text="@string/TrashC" />
+    </RadioGroup>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

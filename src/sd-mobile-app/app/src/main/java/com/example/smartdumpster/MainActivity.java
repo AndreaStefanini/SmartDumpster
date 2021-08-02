@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void ThrowGarbage(View view) {
-        btChannel.sendMessage(Token);
+        btChannel.sendMessage("1");
         btn.setEnabled(false);
     }
 
@@ -158,5 +158,15 @@ public class MainActivity extends AppCompatActivity {
                 state.setText("BT State: not connected");
             }
         }).execute();
+    }
+
+    public void TrashASelected(View view){
+        btChannel.sendMessage("A");
+    }
+    public void TrashBSelected(View view){
+        btChannel.sendMessage("B");
+    }
+    public void TrashCSelected(View view){
+        btChannel.sendMessage("C");
     }
 }

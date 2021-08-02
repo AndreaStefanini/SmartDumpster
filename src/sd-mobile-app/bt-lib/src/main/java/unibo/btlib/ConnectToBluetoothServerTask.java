@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
 public final class ConnectToBluetoothServerTask extends ConnectionTask {
@@ -12,7 +13,8 @@ public final class ConnectToBluetoothServerTask extends ConnectionTask {
 
     public ConnectToBluetoothServerTask(final BluetoothDevice serverBtDevice, final UUID uuid, final EventListener eventListener){
         try {
-            btSocket = serverBtDevice.createRfcommSocketToServiceRecord(uuid);
+            //btSocket = serverBtDevice.createRfcommSocketToServiceRecord(uuid);
+            btSocket= serverBtDevice.createInsecureRfcommSocketToServiceRecord(uuid);
             this.eventListener = eventListener;
         } catch (IOException e) {
             e.printStackTrace();
