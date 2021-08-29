@@ -1,18 +1,19 @@
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   //NELLE COMUNICAZIONI SERIALI TRA ARDUINO E ESP UTILIZZERO' DUE LETTERE PER PERMETTERE AI DUE DISPOSITIVI DI RICONOSCERE COSA E' STATO INVIATO
-                                                        //I+CODICE => IMMONDIAZIA
-                                                        //T+CODICE => TOKEN
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include <ESP8266WiFi.h>
-#include "potenziometro.h"
+#include "potenziometro.hpp"
 #include <ESP8266HTTPClient.h>
 #include <ArduinoJson.h>
 #include <SoftwareSerial.h>
+#include "led.hpp"
 #define rx 4
 #define tx 5
+#define POT 6
+#define GREEN_PIN 7
+#define RED_PIN 8
+#define MAX_TRASH 20
+led* green_led;
+led* red_led;
+Potenziometro* pot;
 int Trash =0;
 HTTPClient client;
 WiFiClient wfclient;
@@ -21,9 +22,12 @@ IPAddress server(104,21,10,8);
 SoftwareSerial arSerial(rx,tx);
 void setup()
 {
+    pot = new Potenziometro(POT);
+    green_led = new led(GREEN_PIN);
+    red_led = new led(RED_PIN);
     Serial.begin(9600);
     arSerial.begin(9600);
-    WiFi.begin("your-wifi","your-passwprd");
+    WiFi.begin("your-wifi","your-password");
     Serial.println("Connecting...");
     while (WiFi.status()!= WL_CONNECTED) {
         delay(500);
@@ -34,11 +38,19 @@ void setup()
     
 }
 
-void loop(){      
-    readSerial();
+void loop(){ 
+    if(Trash<MAX_TRASH){
+      green_led->SwitchOn();
+      red_led->SwitchOff();
+      readSerial();  
+    }else{
+      green_led->SwitchOn();
+      red_led->SwitchOff();
+    }
+    
 }
 
-void connection(String token){
+/*void connection(String token){
  
     wfclient.connect(server,80);
     const char* url ="http://jsonplaceholder.typicode.com/posts";
@@ -61,7 +73,7 @@ void connection(String token){
     client.end();
     wfclient.stop();
     
-}
+}*/
 
 
 void sendSerialMessage(String msg){
@@ -83,15 +95,32 @@ void readSerial(){
      if(content!=""){
           Serial.println("il contenuto della seriale:");
           Serial.println(content);
-          if(content.substring(0,1)=="I"){
-            int newTrash=content.substring(1).toInt();
-            if (newTrash!= Trash){
-              Trash=newTrash;
-            }
-          }else if(content.substring(0,1)=="T"){
-            content=content.substring(1);
-            connection(content);
+          if(content=="1"){
+            Trash++;
+            update_server();
           }
           content=""; 
      }
+}
+void update_server(){
+  wfclient.connect(server,80);
+    const char* url ="http://jsonplaceholder.typicode.com/posts";
+    client.begin(wfclient,url);
+    client.addHeader("Content-Type", "application/json");
+    StaticJsonDocument<256> doc;
+    JsonObject object = doc.to<JsonObject>();
+    object["trash"]= Trash;
+    serializeJson(doc, jsonOutput);
+    //Serial.println(jsonOutput);
+ 
+    
+     
+    int httpCode = client.POST(String(jsonOutput));
+    Serial.println(httpCode);
+    if (httpCode>0 ){
+        String payload = client.getString();
+        Serial.println(payload);
+    }
+    client.end();
+    wfclient.stop();
 }

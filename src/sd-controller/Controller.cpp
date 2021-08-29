@@ -17,13 +17,7 @@ String Controller::retrieve_message(){
 }
 
 void Controller::send_response(String response){
-    Serial.println("la parola è:");
-    Serial.println(response);
-    if(response.equals("ping")){
-      Msg* msg = new Msg("PONG");
-      btService->sendMsg(*msg); 
-    }
-    Msg* msg = new Msg("it's not ping");
+    Msg* msg = new Msg(response);
     btService->sendMsg(*msg);
 }
 void Controller::SelectTrashA(){
@@ -55,4 +49,7 @@ void Controller::close_lid(){
     Trash_C->SwitchOff();
   }
   servo->Position(CLOSE);
+}
+void Controller::update_counter(String ){
+  
 }

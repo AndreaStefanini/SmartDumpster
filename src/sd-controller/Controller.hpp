@@ -17,6 +17,7 @@ class Controller{
             void SelectTrashC();
             void open_lid();
             void close_lid();
+            void update_counter();
         private:
             servo_motore* servo;
             led* Trash_A;

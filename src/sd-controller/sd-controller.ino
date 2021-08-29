@@ -9,39 +9,50 @@
 #define ESP_RX 5
 #define ESP_TX 6
 Controller* arduino;
+int timerID=NULL;
+boolean check=false;
 SimpleTimer timer;
+
+void closing_procedure(){
+  timer.deleteTimer(timerID);
+  timerID=NULL;
+  arduino->close_lid();
+  Serial.println("Il tempo per inserire il rifiuto all'interno del bidone è scaduto ti preghiamo di riprovare");
+  arduino->send_response("timeout");
+
+}
 void setup(){
   Serial.begin(9600);
   arduino = new Controller(TRASH_A,TRASH_B,TRASH_C,BT_RX,BT_TX, ESP_RX, ESP_TX, SERVO ); 
 }
 
 void loop(){
-  if(timer.isReady()){
-    arduino->close_lid();
-    timer.reset();
-    Serial.println("Il tempo per inserire il rifiuto all'interno del bidone è scaduto ti preghiamo di riprovare");
-  }
+  
+    timer.run();
     String content = arduino->retrieve_message();
     delay(1000);
     
     if (content != ""){
+      check=true;
       Serial.println(content);
       if(content.equals("A")){
         arduino->SelectTrashA();
-        timer.setInterval(10000);
+        timerID = timer.setTimeout(20000,closing_procedure);
         arduino->open_lid();
       }else if(content.equals("B")){
         arduino->SelectTrashB();
-        timer.setInterval(10000);
+        timerID = timer.setTimeout(20000,closing_procedure);  
         arduino->open_lid();
       }else if(content.equals("C")){
         arduino->SelectTrashC();
-        timer.setInterval(10000);
+        timerID = timer.setTimeout(20000,closing_procedure);
         arduino->open_lid();
       }else if(content.equals("1")){
           arduino->close_lid();
-          timer.reset();
+          timer.deleteTimer(timerID);
           Serial.println("Un rifiuto aggiunto al bidone :)");
+          arduino->send_response("ok");
+          arduino->update_counter("1");
       }else{
         Serial.println("An error occured while receiving a message... please try again");   
       }
