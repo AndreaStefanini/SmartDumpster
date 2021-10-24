@@ -3,10 +3,11 @@ package com.example.smartdumpster;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.net.ConnectivityManager;
@@ -15,6 +16,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -22,7 +24,9 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
 
@@ -42,8 +46,8 @@ import unibo.btlib.exceptions.BluetoothDeviceNotFound;
  * TODO:
  *  request to turn on wifi DONE
  *  request to turn on bt DONE
- *  check the register, because the discovery doesn't return no new bluetooth devices
- *  use a BT library to manage the exchange of information
+ *  check the register, because the discovery doesn't return no new bluetooth devices DONE
+ *  use a BT library to manage the exchange of information DONE
  *
  */
 public class MainActivity extends AppCompatActivity {
@@ -51,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private String Token;
     private BluetoothChannel btChannel;
     private Button btn;
+    private EditText t;
 
 
     @Override
@@ -63,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
         }
         checkWifi();
         token = findViewById(R.id.token);
+        t= findViewById(R.id.quant_trash);
+        btn = findViewById(R.id.throw_garbage);
 
     }
 
@@ -101,11 +108,9 @@ public class MainActivity extends AppCompatActivity {
         //StringRequest stringQ = new StringRequest(Request.Method.GET, "http://dummy.restapiexample.com/api/v1/employee/1",  response -> token.setText(response), error -> token.setText("There was an error during comunication with the server"));
         //System.out.println(Token);
 
-        btn = findViewById(R.id.throw_garbage);
-        while(btChannel==null && token.getText().equals("")){
 
-        }
-        btn.setEnabled(true);
+        while(btChannel==null && token.getText().length()==0){}
+
     }
 
     /**
@@ -113,8 +118,36 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void ThrowGarbage(View view) {
-        btChannel.sendMessage("1");
-        btn.setEnabled(false);
+        String value = t.getText().toString();
+        if(!value.equals(null) && !value.isEmpty()){
+            int weight =Integer.parseInt(t.getText().toString());
+            System.out.println(weight);
+            btChannel.sendMessage(String.valueOf(weight));
+            btn.setEnabled(false);
+            t.setText("");
+            RequestQueue queue = Volley.newRequestQueue(this);
+            //da testare questa parte
+            StringRequest sRequest = new StringRequest(Request.Method.POST, "https://dummy.restapiexample.com/api/v1/employee/1",null,response -> {
+                try{
+                    token.setText(response.getMessage());
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            });
+        }else{
+            AlertDialog alert = new AlertDialog.Builder(this)
+                    .setMessage("Inserire la qualitità di rifiuti da buttare")
+                    .setTitle("Inserire i rifiuti")
+                    .setPositiveButton("ok",new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .create();
+            alert.show();
+        }
+
     }
 
     public void checkWifi(){
@@ -165,13 +198,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void TrashASelected(View view){
         btChannel.sendMessage("A");
+        btn.setEnabled(true);
     }
     public void TrashBSelected(View view){
         btChannel.sendMessage("B");
+        btn.setEnabled(true);
 
     }
     public void TrashCSelected(View view){
         btChannel.sendMessage("C");
+        btn.setEnabled(true);
     }
     private void clearSelection(){
         final RadioGroup group = findViewById(R.id.trashes);

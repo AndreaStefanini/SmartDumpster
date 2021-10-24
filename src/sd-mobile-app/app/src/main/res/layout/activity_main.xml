@@ -72,12 +72,10 @@
 
     <RadioGroup
         android:id="@+id/trashes"
-        android:layout_width="123dp"
-        android:layout_height="145dp"
-        android:layout_marginStart="144dp"
-        android:layout_marginTop="352dp"
-        android:layout_marginEnd="144dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="104dp"
+        android:layout_height="127dp"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="359dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -103,5 +101,18 @@
             android:onClick="TrashCSelected"
             android:text="@string/TrashC" />
     </RadioGroup>
+
+    <EditText
+        android:id="@+id/quant_trash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="418dp"
+        android:layout_marginEnd="20dp"
+        android:autofillHints="inseisci la quantià di rifiuti da buttare, per un massimo di 100"
+        android:ems="10"
+        android:hint="@string/placeholder"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

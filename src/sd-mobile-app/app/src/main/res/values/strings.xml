@@ -2,11 +2,12 @@
     <string name="app_name">SmartDumpster</string>
     <string name="token">token:</string>
     <string name="richiedi_token">richiedi token</string>
-    <string name="throw_garbage">butta rifiuto</string>
+    <string name="throw_garbage">butta rifiuti</string>
     <string name="btState">BT State: not connected</string>
     <string name="TrashA">Rifiuto A</string>
     <string name="TrashB">Rifiuto B</string>
     <string name="TrashC">Rifiuto C</string>
+    <string name="placeholder">Q.ntità di rifiuti da buttare</string>
 
 
 </resources>
