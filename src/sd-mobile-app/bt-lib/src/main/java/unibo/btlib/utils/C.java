@@ -10,6 +10,7 @@ public class C {
 
     public class message {
         public static final char MESSAGE_TERMINATOR = '\n';
+        public static final char MESSAGE_CONCLUDE = '\r';
     }
 
     public class emulator {

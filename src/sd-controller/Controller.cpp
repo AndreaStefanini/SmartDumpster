@@ -17,6 +17,7 @@ String Controller::retrieve_message(){
 }
 
 void Controller::send_response(String response){
+    Serial.println(response);
     Msg* msg = new Msg(response);
     btService->sendMsg(*msg);
 }
@@ -50,6 +51,7 @@ void Controller::close_lid(){
   }
   servo->Position(CLOSE);
 }
-void Controller::update_counter(String ){
-  
+void Controller::update_counter(int weight ){
+  String Content =String(weight);
+  espSerial->print(Content);
 }

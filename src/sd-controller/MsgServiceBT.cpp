@@ -7,12 +7,15 @@ MsgServiceBT::MsgServiceBT(int rxPin, int txPin){
 }
 
 void MsgServiceBT::init(){
-  content.reserve(256);
+  //content.reserve(256);
   channel->begin(9600);
 }
 
 bool MsgServiceBT::sendMsg(Msg msg){
-  channel->println(msg.getContent());  
+  String content = msg.getContent();
+  content+="\n";
+  channel->print(content);  
+  
 }
 
 bool MsgServiceBT::isMsgAvailable(){

@@ -27,11 +27,9 @@ void setup(){
 }
 
 void loop(){
-  
     timer.run();
     String content = arduino->retrieve_message();
-    delay(1000);
-    
+    delay(1000);2,4
     if (content != ""){
       check=true;
       Serial.println(content);
@@ -47,14 +45,15 @@ void loop(){
         arduino->SelectTrashC();
         timerID = timer.setTimeout(20000,closing_procedure);
         arduino->open_lid();
-      }else if(content.equals("1")){
+      }else if(isDigit(content.charAt(0))){
           arduino->close_lid();
           timer.deleteTimer(timerID);
           Serial.println("Un rifiuto aggiunto al bidone :)");
           arduino->send_response("ok");
-          arduino->update_counter("1");
+          int weight = content.toInt();
+          arduino->update_counter(weight);
       }else{
-        Serial.println("An error occured while receiving a message... please try again");   
+        Serial.println("E' apparso un errore, durante la comunicazione");   
       }
     }  
 }

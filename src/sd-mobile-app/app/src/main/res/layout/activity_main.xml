@@ -6,76 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/token"
-        android:layout_width="161dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="36dp"
-        android:layout_marginEnd="125dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/throw_garbage" />
-
-    <TextView
-        android:id="@+id/textView"
-        style="@style/AppTheme"
-        android:layout_width="59dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="62dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="115dp"
-        android:text="@string/token"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/token"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/throw_garbage"
-        android:layout_width="153dp"
-        android:layout_height="53dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="14dp"
-        android:layout_marginBottom="33dp"
-        android:clickable="false"
-        android:enabled="false"
-        android:onClick="ThrowGarbage"
-        android:text="@string/throw_garbage"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trashes"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/request_token"
-        android:layout_width="153dp"
-        android:layout_height="53dp"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="36dp"
-        android:onClick="GetToken"
-        android:text="@string/richiedi_token"
-        app:layout_constraintBottom_toTopOf="@+id/token"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trashes"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/btState"
+    <EditText
+        android:id="@+id/quant_trash"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="131dp"
-        android:layout_marginEnd="131dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/btState"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="356dp"
+        android:layout_marginEnd="20dp"
+        android:autofillHints="inseisci la quantià di rifiuti da buttare, per un massimo di 100"
+        android:ems="10"
+        android:hint="@string/placeholder"
+        android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <RadioGroup
         android:id="@+id/trashes"
         android:layout_width="104dp"
         android:layout_height="127dp"
-        android:layout_marginStart="21dp"
-        android:layout_marginTop="359dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="300dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -102,17 +51,88 @@
             android:text="@string/TrashC" />
     </RadioGroup>
 
-    <EditText
-        android:id="@+id/quant_trash"
+    <Button
+        android:id="@+id/request_token"
+        android:layout_width="153dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="36dp"
+        android:onClick="GetToken"
+        android:text="@string/richiedi_token"
+        app:layout_constraintBottom_toTopOf="@+id/token"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/trashes"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/token"
+        android:layout_width="161dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="87dp"
+        android:layout_marginBottom="25dp"
+        app:layout_constraintBottom_toTopOf="@+id/btState"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/btState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="418dp"
-        android:layout_marginEnd="20dp"
-        android:autofillHints="inseisci la quantià di rifiuti da buttare, per un massimo di 100"
-        android:ems="10"
-        android:hint="@string/placeholder"
-        android:inputType="number"
+        android:layout_marginStart="131dp"
+        android:layout_marginEnd="131dp"
+        android:layout_marginBottom="72dp"
+        android:text="@string/btState"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/throw_garbage"
+        android:layout_width="153dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="33dp"
+        android:clickable="false"
+        android:enabled="false"
+        android:onClick="ThrowGarbage"
+        android:text="@string/throw_garbage"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/trashes"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView"
+        style="@style/AppTheme"
+        android:layout_width="59dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="71dp"
+        android:layout_marginTop="37dp"
+        android:text="@string/token"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="27dp"
+        android:layout_marginEnd="63dp"
+        android:onClick="RequestDelay"
+        android:text="@string/extension"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/request_token" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="351dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="17dp"
+        android:layout_marginEnd="19dp"
+        android:text="Se il Bluetooth non si connette entro 10 secondi riavvia l'applicazione"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btState" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

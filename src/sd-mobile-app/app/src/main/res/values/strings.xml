@@ -8,6 +8,7 @@
     <string name="TrashB">Rifiuto B</string>
     <string name="TrashC">Rifiuto C</string>
     <string name="placeholder">Q.ntità di rifiuti da buttare</string>
+    <string name="extension">Richiesta estensione di tempo</string>
 
 
 </resources>

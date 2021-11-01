@@ -39,7 +39,6 @@ public final class RealBluetoothChannel extends BluetoothChannel {
 
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
-
             try {
                 tmpIn = socket.getInputStream();
             } catch (IOException e) {
@@ -66,7 +65,7 @@ public final class RealBluetoothChannel extends BluetoothChannel {
 
                     while ((inputByte = input.readByte()) != 0) {
                         char chr = (char) inputByte;
-                        if(chr != C.message.MESSAGE_TERMINATOR){
+                        if(chr != C.message.MESSAGE_TERMINATOR && chr != C.message.MESSAGE_CONCLUDE){
                             readbuffer.append(chr);
                         } else {
                             String inputString = readbuffer.toString();

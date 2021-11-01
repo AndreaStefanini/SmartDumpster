@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     *
+     * this function send an http request to a server in order to obtain a token
      * @param view
      */
     public void GetToken(View view){
@@ -176,14 +176,16 @@ public class MainActivity extends AppCompatActivity {
                 btChannel.registerListener(new RealBluetoothChannel.Listener(){
                     @Override
                     public void onMessageReceived(String receivedMessage){
-                        if(receivedMessage.equals("ok\r") || receivedMessage.equals("timeout\r")){
+                        System.out.println(receivedMessage);
+                        /*if(receivedMessage.equals("ok\n") || receivedMessage.equals("timeout\n")){
                             clearSelection();
-                        }
+                        }*/
                     }
 
                     @Override
                     public void onMessageSent(String sentMessage) {
                         token.setText("");
+                        System.out.println("Message sent");
                     }
                 });
             }
@@ -212,5 +214,8 @@ public class MainActivity extends AppCompatActivity {
     private void clearSelection(){
         final RadioGroup group = findViewById(R.id.trashes);
         group.clearCheck();
+    }
+    public void RequestDelay(View view){
+        btChannel.sendMessage("delay");
     }
 }

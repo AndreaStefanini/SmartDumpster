@@ -17,7 +17,7 @@ class Controller{
             void SelectTrashC();
             void open_lid();
             void close_lid();
-            void update_counter();
+            void update_counter(int weigth);
         private:
             servo_motore* servo;
             led* Trash_A;
