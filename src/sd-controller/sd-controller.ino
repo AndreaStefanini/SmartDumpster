@@ -4,8 +4,8 @@
 #define TRASH_B 12
 #define TRASH_A 13
 #define SERVO 8
-#define BT_TX 2
-#define BT_RX 3
+#define BT_TX 3
+#define BT_RX 2
 #define ESP_RX 5
 #define ESP_TX 6
 Controller* arduino;
@@ -29,7 +29,7 @@ void setup(){
 void loop(){
     timer.run();
     String content = arduino->retrieve_message();
-    delay(1000);2,4
+    delay(1000);
     if (content != ""){
       check=true;
       Serial.println(content);
@@ -52,8 +52,10 @@ void loop(){
           arduino->send_response("ok");
           int weight = content.toInt();
           arduino->update_counter(weight);
+      }else if(content.equals("delay")){
+          timer.restartTimer(timerID);  
       }else{
-        Serial.println("E' apparso un errore, durante la comunicazione");   
+        Serial.println("E' apparso un errore, durante la comunicazione");
       }
     }  
 }

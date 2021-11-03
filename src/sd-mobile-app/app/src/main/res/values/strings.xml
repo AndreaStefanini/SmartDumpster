@@ -9,6 +9,7 @@
     <string name="TrashC">Rifiuto C</string>
     <string name="placeholder">Q.ntità di rifiuti da buttare</string>
     <string name="extension">Richiesta estensione di tempo</string>
+    <string name="warning_message">Se il Bluetooth non si connette entro 10 secondi riavvia "l'applicazione"</string>
 
 
 </resources>

@@ -4,7 +4,7 @@ Controller::Controller(int TRASH_A, int TRASH_B,int TRASH_C,int BT_RX,int BT_TX,
         Trash_A = new led(TRASH_A);
         Trash_B = new led(TRASH_B);
         Trash_C = new led(TRASH_C);
-        btService = new MsgServiceBT(BT_RX,BT_TX);
+        btService = new MsgServiceBT(BT_TX,BT_RX);
         espSerial = new SoftwareSerial(ESP_RX, ESP_TX);
         servo = new servo_motore(SERVO);
         espSerial->begin(9600);
@@ -17,7 +17,6 @@ String Controller::retrieve_message(){
 }
 
 void Controller::send_response(String response){
-    Serial.println(response);
     Msg* msg = new Msg(response);
     btService->sendMsg(*msg);
 }
