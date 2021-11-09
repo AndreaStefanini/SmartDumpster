@@ -17,17 +17,23 @@ import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 import unibo.btlib.BluetoothChannel;
@@ -54,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText t;
     private Button ext;
     private RadioGroup group;
+    private String selected_trash;
+    private RequestQueue queue;
 
 
     @Override
@@ -70,7 +78,11 @@ public class MainActivity extends AppCompatActivity {
         btn = findViewById(R.id.throw_garbage);
         group = findViewById(R.id.trashes);
         ext = findViewById(R.id.extension);
-
+        //setting the radio button not clickable
+        for (int i=0; i< group.getChildCount(); i++){
+            group.getChildAt(i).setClickable(false);
+        }
+         queue= Volley.newRequestQueue(this);
     }
 
     public void onStart() {
@@ -92,19 +104,26 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void GetToken(View view){
-        RequestQueue requestQ = Volley.newRequestQueue(this);
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET,"http://192.168.1.9/sd-service/index.php", null,
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET,"http://192.168.1.9/sd-service/get_token.php", null,
                 response -> {
                     try {
                         Token  = (String) response.get("token");
-                        token.setText(Token);
+                        if(Token.equals("NULL")){
+                            token.setText("Bidone al momento non disponibile, riprovare più tardi");
+                        }else{
+                            for (int i=0; i< group.getChildCount(); i++){
+                                group.getChildAt(i).setClickable(true);
+                            }
+                            token.setText(Token);
+                        }
+
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 },
                 error -> token.setText(error.getMessage()));
-        requestQ.add(objectRequest);
+        queue.add(objectRequest);
 
 
         while(btChannel==null && token.getText().length()==0){}
@@ -119,20 +138,23 @@ public class MainActivity extends AppCompatActivity {
     public void ThrowGarbage(View view) {
         String value = t.getText().toString();
         if(!value.equals(null) && !value.isEmpty()){
-            int weight =Integer.parseInt(t.getText().toString());
+            int weight =Integer.parseInt(value);
             btChannel.sendMessage(String.valueOf(weight));
             btn.setEnabled(false);
             ext.setEnabled(false);
             t.setText("");
-            RequestQueue queue = Volley.newRequestQueue(this);
-            //da testare questa parte
-            StringRequest sRequest = new StringRequest(Request.Method.GET, "https://dummy.restapiexample.com/api/v1/employee/1",null,response -> {
-                try{
-                    token.setText(response.getMessage());
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
+            HashMap<String, String> server_data= new HashMap();
+            server_data.put("Type",this.selected_trash);
+            server_data.put("Quantity",String.valueOf(weight));
+
+
+            //non riesco a mandare questa mappa con la tipologia dei rifiuti e la quantità
+            JsonObjectRequest jRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.1.9/sd-service/throw_trash.php",new JSONObject(server_data), response ->{
+            }, error->{
+                System.out.println(error.getMessage());
             });
+            queue.add(jRequest);
+            
         }else{
             AlertDialog alert = new AlertDialog.Builder(this)
                     .setMessage("Inserire la qualitità di rifiuti da buttare")
@@ -224,16 +246,19 @@ public class MainActivity extends AppCompatActivity {
 
     public void TrashASelected(View view){
         this.btChannel.sendMessage("A");
+        this.selected_trash= "A";
         this.btn.setEnabled(true);
         this.ext.setEnabled(true);
     }
     public void TrashBSelected(View view){
         this.btChannel.sendMessage("B");
+        this.selected_trash= "B";
         this.btn.setEnabled(true);
         this.ext.setEnabled(true);
     }
     public void TrashCSelected(View view){
         this.btChannel.sendMessage("C");
+        this.selected_trash="C";
         this.btn.setEnabled(true);
         this.ext.setEnabled(true);
 
@@ -242,6 +267,9 @@ public class MainActivity extends AppCompatActivity {
         this.ext.setEnabled(false);
         this.btn.setEnabled(false);
         this.group.clearCheck();
+        for (int i=0; i< group.getChildCount(); i++){
+            group.getChildAt(i).setClickable(false);
+        }
     }
     public void RequestDelay(View view){
         this.btChannel.sendMessage("delay");

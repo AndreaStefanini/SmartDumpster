@@ -25,7 +25,6 @@
         android:layout_height="127dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="300dp"
-        android:clickable="false"
         android:clipChildren="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -34,6 +33,7 @@
             android:id="@+id/trash_a"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:checked="false"
             android:onClick="TrashASelected"
             android:text="@string/TrashA" />
 
@@ -41,6 +41,8 @@
             android:id="@+id/trash_b"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:checked="false"
+            android:clickable="false"
             android:onClick="TrashBSelected"
             android:text="@string/TrashB" />
 
@@ -49,6 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="false"
+            android:clickable="false"
             android:onClick="TrashCSelected"
             android:text="@string/TrashC" />
     </RadioGroup>
@@ -70,14 +73,14 @@
 
     <TextView
         android:id="@+id/token"
-        android:layout_width="159dp"
-        android:layout_height="44dp"
+        android:layout_width="238dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="582dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="104dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.575"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.847" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/btState"
