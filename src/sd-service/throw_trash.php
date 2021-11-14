@@ -4,4 +4,5 @@
     $peso = $obj->Quantity;
     $tipo = $obj->Type;
     $db->throw_trash($tipo,$peso);
+    
 ?>

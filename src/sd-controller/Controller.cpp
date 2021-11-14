@@ -4,10 +4,10 @@ Controller::Controller(int TRASH_A, int TRASH_B,int TRASH_C,int BT_RX,int BT_TX,
         Trash_A = new led(TRASH_A);
         Trash_B = new led(TRASH_B);
         Trash_C = new led(TRASH_C);
-        btService = new MsgServiceBT(BT_TX,BT_RX);
-        espSerial = new SoftwareSerial(ESP_RX, ESP_TX);
+        btService = new MsgServiceBT(BT_RX,BT_TX);
+        espSerial = new MsgServiceBT(ESP_RX, ESP_TX);
         servo = new servo_motore(SERVO);
-        espSerial->begin(9600);
+        espSerial->init();
         btService->init();     
 }
 
@@ -51,6 +51,7 @@ void Controller::close_lid(){
   servo->Position(CLOSE);
 }
 void Controller::update_counter(int weight ){
-  String Content =String(weight);
-  espSerial->print(Content);
+    String content=String(weight);
+    Msg *msg = new Msg(content);
+    espSerial->sendMsg(*msg);
 }

@@ -1,7 +1,6 @@
 #include "led.hpp"
 #include "servo_motore.hpp"
 #include "MsgServiceBT.hpp"
-#include <SoftwareSerial.h>
 #define OPEN 180
 #define CLOSE -180
  
@@ -24,6 +23,6 @@ class Controller{
             led* Trash_B;
             led* Trash_C;
             MsgServiceBT* btService;
-            SoftwareSerial* espSerial;
+            MsgServiceBT* espSerial;
             
 };

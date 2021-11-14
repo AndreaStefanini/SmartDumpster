@@ -28,11 +28,11 @@ class database {
         $throw = $this->connection->prepare("INSERT INTO gestore(tipologia, peso) VALUES(?,?)");
         $throw->bind_param("si", $type, $weight);
         $throw->execute();
-        $rif = get_trash()["rifiuti"];
-        $rif++;
+        $rif = $this->get_trash()[0]["rifiuti"];
+        $rif+=1;
         $new_trash = $this->connection->prepare("UPDATE `stato` SET `rifiuti`=? WHERE 1");
         $new_trash->bind_param("i",$rif);
-        $new_state->execute();
+        $new_trash->execute();
 
         //devo creare la seconda e terza query per fare l'update dello stato
     }
@@ -44,7 +44,7 @@ class database {
     }
     public function update_state($state){
         $new_state = $this->connection->prepare("UPDATE `stato` SET `disponibile`=? WHERE 1");
-        $new_state->bind_param("s",$state);
+        $new_state->bind_param("i",$state);
         $new_state->execute();
     }
     public function empty_trash(){
@@ -52,7 +52,7 @@ class database {
         $new_state->execute();
     }
     public function get_trash(){
-        $trash = $this->connection->prepare("SELECT rifiuti");
+        $trash = $this->connection->prepare("SELECT rifiuti FROM `stato` WHERE 1");
         $trash->execute();
         $result = $trash->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);

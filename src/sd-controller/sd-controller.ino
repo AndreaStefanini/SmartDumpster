@@ -4,8 +4,8 @@
 #define TRASH_B 12
 #define TRASH_A 13
 #define SERVO 8
-#define BT_TX 3
-#define BT_RX 2
+#define BT_RX 3
+#define BT_TX 2
 #define ESP_RX 5
 #define ESP_TX 6
 Controller* arduino;
