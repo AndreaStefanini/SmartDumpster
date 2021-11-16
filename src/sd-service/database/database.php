@@ -9,21 +9,6 @@ class database {
             die("An error occurred during the connection to the database, please retry". $this->connection->connect_error);
         }
     }
-    //questa funzione è solo come da esempio, da cancellare prima di terminare il progetto
-    public function add_user($nome, $cognome, $email, $userpassword, $data_nascita, $usertype, $profileimage){
-       $insertquery=$this->connection->prepare("INSERT INTO users(Nome,Cognome,email,password,Data_Nascita,Tipo_User, ProfileImage) VALUES(?,?,?,?,?,?,?)");
-       $insertquery->bind_param('sssssss',$nome,$cognome,$email,$userpassword,$data_nascita,$usertype,$profileimage);
-       $insertquery->execute();
-
-    }
-    //questa funzione è solo come da esempio, da cancellare prima di terminare il progetto
-    public function login($email, $password){
-        $login=$this->connection->prepare("SELECT ID ,Nome, Cognome, Tipo_User, ProfileImage FROM users WHERE email= ? and password= ?");
-        $login->bind_param("ss", $email, $password);
-        $login->execute();
-        $result = $login->get_result();
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
     public function throw_trash($type, $weight){
         $throw = $this->connection->prepare("INSERT INTO gestore(tipologia, peso) VALUES(?,?)");
         $throw->bind_param("si", $type, $weight);
@@ -57,6 +42,46 @@ class database {
         $result = $trash->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
 
+    }
+    public function get_TrashA(){
+        $trashA = $this->connection->prepare("SELECT SUM(peso) as peso, data FROM gestore WHERE tipologia='A' GROUP BY data");
+        $trashA->execute();
+        $results = $trashA->get_result()->fetch_all(MYSQLI_ASSOC);
+        if(!empty($results)){
+            foreach($results as $result):
+                $datas[] = array("label"=>$result["data"],"y"=>$result["peso"]);
+            endforeach;
+            return $datas;
+        }else{
+            die("error");
+        }
+        
+    }
+    public function get_TrashB(){
+        $trashB = $this->connection->prepare("SELECT SUM(peso) as peso, data FROM gestore WHERE tipologia='B' GROUP BY data");
+        $trashB->execute();
+        $results = $trashB->get_result()->fetch_all(MYSQLI_ASSOC);
+        if(!empty($results)){
+            foreach($results as $result):
+                $datas[] = array("label"=>$result["data"],"y"=>$result["peso"]);
+            endforeach;
+            return $datas;
+        }else{
+            die("error");
+        }
+    }
+    public function get_TrashC(){
+        $trashC = $this->connection->prepare("SELECT SUM(peso) as peso, data FROM gestore WHERE tipologia='C' GROUP BY data");
+        $trashC->execute();
+        $results = $trashC->get_result()->fetch_all(MYSQLI_ASSOC);
+        if(!empty($results)){
+            foreach($results as $result):
+                $datas[] = array("label"=>$result["data"],"y"=>$result["peso"]);
+            endforeach;
+            return $datas;
+        }else{
+            die("error");
+        }
     }
 
 }
