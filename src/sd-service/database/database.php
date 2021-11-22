@@ -83,6 +83,18 @@ class database {
             die("error");
         }
     }
+    public function get_all_trash(){
+        $all = $this->connection->prepare("SELECT SUM(peso) as peso from gestore WHERE 1");
+        $all->execute();
+        $result = $all->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+    public function get_all_gestore(){
+        $gestore = $this->connection->prepare("SELECT * FROM gestore WHERE 1");
+        $gestore->execute();
+        $result = $gestore->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 
 }
 

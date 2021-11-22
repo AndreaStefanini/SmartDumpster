@@ -76,7 +76,6 @@ void update_server_on_status () {
   DynamicJsonDocument doc(256);
   doc["State"] = status;
   serializeJson(doc, jsonOutput);
-  Serial.println(jsonOutput);
 
 
 
@@ -84,7 +83,6 @@ void update_server_on_status () {
   Serial.println(httpCode);
   if (httpCode > 0 ) {
     String payload = client.getString();
-    Serial.println(payload);
   }
   client.end();
   wfclient.stop();
@@ -100,6 +98,7 @@ void read_arduino_serial() {
   }
 }
 int get_updates() {
+  DynamicJsonDocument doc(256);
   wfclient.connect(server, 80);
   const char* url = "http://192.168.1.9/sd-service/get_server_status.php";
   client.begin(wfclient, url);
@@ -107,14 +106,18 @@ int get_updates() {
   int httpCode = client.GET();
 
   if (httpCode > 0 ) {
-    int payload = client.getString().toInt();
-    if (payload != status) {
-      status = payload;
+    String payload = client.getString();
+    deserializeJson(doc,payload);
+    int rifiuti = doc["rifiuti"];
+    int disponibilita = doc["disponibile"];
+    if (disponibilita != status) {
+      status = disponibilita;
       Serial.println("non sono uguali");
-      if (Trash >= MAX_TRASH) {
-        Trash = 0;
-      }
+      
     }
+    if (Trash != rifiuti) {
+        Trash = rifiuti;
+      }
   }
   client.end();
   wfclient.stop();
