@@ -13,7 +13,7 @@
 #define MAX_TRASH 100
 led* green_led;
 led* red_led;
-//Potenziometro* pot;
+Potenziometro* pot;
 //the status is set to true when the dumpster is available, false in the opposite case
 int status = 1;
 int notified = 0;
@@ -24,7 +24,7 @@ char jsonOutput[128];
 IPAddress server(192, 168, 1, 9);
 MsgServiceBT *arSerial = new MsgServiceBT(rx, tx);
 void setup() {
-  //pot = new Potenziometro(POT);
+  pot = new Potenziometro(POT);
   green_led = new led(GREEN_PIN);
   red_led = new led(RED_PIN);
   arSerial->init();
